@@ -95,20 +95,20 @@ int tree_size(tree_t *tree)
 
 }
 
-int node_depth(node_t *node){
-  int left_depth = 0;
-  int right_depth = 0;
+int node_DEPTH(node_t *node){
+  int left_DEPTH = 0;
+  int right_DEPTH = 0;
   if(node->left != NULL){
-    left_depth = node_depth(node->left) + 1;
+    left_DEPTH = node_DEPTH(node->left) + 1;
   }
   if(node->right != NULL){
-    right_depth = node_depth(node->right) + 1;
+    right_DEPTH = node_DEPTH(node->right) + 1;
   }
-  if(left_depth >= right_depth){
-    return left_depth;
+  if(left_DEPTH >= right_DEPTH){
+    return left_DEPTH;
   }
   else{
-    return right_depth;
+    return right_DEPTH;
   }
 }
 
@@ -149,4 +149,3 @@ node_t **place_to_insert_tree(tree_t *tree, tree_key_t key)
 {
   return place_to_insert_node(tree->root, key);
 }
-
