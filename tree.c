@@ -157,21 +157,38 @@ node_t **place_to_insert_tree(tree_t *tree, tree_key_t key)
 
 node_t *left_left (node_t *node)
 {
+  node_t *tmp = node->left->right;
   node->left->right = node;
   node = node->left;
-  node->right->left = NULL;
+  node->right->left = tmp;
   return node;
+}
+node_t *left_right(node_t *node)
+{
+   node->left->right->left = node->left;
+   node->left = node->left->right;
+   node->left->right = NULL;
+   return left_left(node);
 }
 
 node_t *right_right(node_t *node)
 {
-   node->left->left = node;
-   node = node->right;
-   node->left->right = NULL;
+  node_t *tmp = node->right->left;
+  node->left->left = node;
+  node = node->right;
+  node->left->right = tmp;
    return node;
 }
 
+node_t *right_left(node_t *node)
+{
+   node->right->left->right = node->right;
+   node->right = node->right->left;
+   node->right->left = NULL;
+   return right_right(node);
+}
 
+/*
 node_t *balance_node(node_t *node)
 {
   if (node->right == NULL)
@@ -213,6 +230,89 @@ node_t *balance_node(node_t *node)
     }
   
 }
+*/
+
+node_t *find_unbalanced_to_fix(node_t *node , node_t *fel)
+{
+  int depth_right = node_depth(node->right);
+  int depth_left = node_depth(node->left);
+  
+  if (node == NULL)
+    {
+      return fel;
+    }
+   if( abs( depth_left -depth_right) > 1)
+    {
+      fel = node;
+      if(depth_left > depth_right)
+        {
+          find_unbalanced_to_fix(node->left, fel);
+        }
+      else
+        {
+          find_unbalanced_to_fix(node->right, fel);
+        }
+    }
+   return fel;
+}
+
+node_t *balanced_node(node_t *node)
+{
+  
+  
+  if (node_depth(node->right) > node_depth(node->left))
+    {
+      if (node_depth(node->right->right) > node_depth(node->right->left))
+        {
+          return right_right(node);
+        }
+      else if (node_depth(node->right->left) > node_depth(node->right->right) && node->left == NULL)
+        {
+          return right_left(node);
+        }
+      else if( node_depth(node->right->left->right) > node_depth(node->right->left->left))
+        {
+          left_right(node->right);
+          return right_right(node);
+        }
+      else
+        {
+          left_left(node->right);
+          return right_right(node);
+        }
+      
+    }
+
+
+
+
+
+  else //if (node_depth(node->left) > node_depth(node->right))
+    {
+      if (node_depth(node->left->left) > node_depth(node->left->right))
+        {
+          return left_left(node);
+        }
+      else if (node_depth(node->left->right) > node_depth(node->left->left) && node->right == NULL)
+        {
+          return left_right(node);
+        }
+      else if( node_depth(node->left->right->left) > node_depth(node->left->right->right))
+        {
+          right_left(node->left);
+          return left_left(node);
+        }
+      else
+        {
+          right_right(node->left);
+          return left_left(node);
+        }
+    }
+    
+}
+
+
+
 
 bool tree_insert(tree_t *tree, tree_key_t key, elem_t elem)
 {
@@ -232,9 +332,25 @@ bool tree_insert(tree_t *tree, tree_key_t key, elem_t elem)
       new_node->elem = elem;
       new_node->key = key;
       *insert_place = new_node;
-      return true;
+      if(abs(node_depth(tree->root->right) - node_depth(tree->root->left)) <= 1)
+        {
+          return true;
+        }
+      else
+        {
+      node_t *fel = calloc(1,sizeof(node_t));
+      do
+        {
+          fel = NULL;
+          find_unbalanced_to_fix(tree->root , fel);
+          balanced_node(fel);
+      
+        }
+      while(fel != NULL);
+        
+        }
     }
-  
+  return true;
 }
 
 bool tree_has_key(tree_t *tree, tree_key_t key)
