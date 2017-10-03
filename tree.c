@@ -369,7 +369,7 @@ bool tree_insert(tree_t *tree, tree_key_t key, elem_t elem)
           do
         {
           unbalanced_part = NULL; //set to NULL every iteration.
-          node_t ** u_p = find_unbalanced_to_fix(tree->root , unbalanced_part);
+          node_t ** u_p = find_unbalanced_to_fix(&tree->root , unbalanced_part);
           balanced_node(unbalanced_part);
       
         }
