@@ -104,12 +104,12 @@ int node_depth(node_t *node)
     {
        if(left_depth >= right_depth)
          {
-           return left_depth;
+           return left_depth + 1;
              
          }
        else
          {
-           return right_depth;
+           return right_depth + 1;
          }       
     }
   if(node->left != NULL)
@@ -123,11 +123,11 @@ int node_depth(node_t *node)
   
   if(left_depth >= right_depth)
     {
-    return left_depth;
+    return left_depth + 1;
     }
   else
     {
-    return right_depth;
+    return right_depth + 1;
     }
 }
 
@@ -137,7 +137,7 @@ int tree_depth(tree_t *tree)
     {
     return 0;
     }
-  return 1 + node_depth(tree->root);
+  return node_depth(tree->root);
 }
 
 node_t **place_to_insert_node(node_t *node, tree_key_t key)
@@ -367,7 +367,7 @@ bool tree_insert(tree_t *tree, tree_key_t key, elem_t elem)
           unbalanced_part = NULL; //set to NULL every iteration.
           //unbalanced_part = find_unbalanced_to_fix(&tree->root, unbalanced_part);
           //balanced_node(unbalanced_part);
-          left_left(find_unbalanced_to_fix(&tree->root, unbalanced_part));
+          right_right(find_unbalanced_to_fix(&tree->root, unbalanced_part));
       
         }
       while(unbalanced_part != NULL);
@@ -429,7 +429,7 @@ int main()
   tree_t *tree  = tree_new(NULL,NULL,NULL,NULL);
   
   elem_t key;
-  key.i = 3;
+  key.i = 1;
   elem_t elem;
   elem.i = 555;
   tree_insert(tree, key , elem);
@@ -441,7 +441,7 @@ int main()
   tree_insert(tree , key1 , elem1);
   
   elem_t key2;
-  key2.i = 1;
+  key2.i = 3;
   elem_t elem2;
   elem2.i = 5552;
   tree_insert(tree , key2 , elem2);
@@ -450,7 +450,6 @@ int main()
   int j = tree_size(tree);
   printf("depth = %d , size = %d\n" , i ,j);
 
- 
   printf("root = %d\n" , tree->root->key.i);
   printf("root->left = %d\n" , tree->root->left->key.i);
   printf("root->right = %d\n" , tree->root->right->key.i);
