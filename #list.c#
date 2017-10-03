@@ -39,7 +39,7 @@ int list_length_iteration_link(link_t *link, int count)
   else
     {
       ++count;
-      list_length_iteration_link(link->next, count);
+      return list_length_iteration_link(link->next, count);
     }
   return count;
   
