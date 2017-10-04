@@ -376,60 +376,95 @@ void node_patch(node_t **node , elem_t *result)
   result = &(*node)->elem;
   if ((*node)->right == NULL && (*node)->left == NULL)
     {
-      *node = NULL;
+     (*node) = NULL;
       return;
     }
   if ((*node)->left == NULL)
     {
+      node_t *tmp =(*node);
       *node = (*node)->right;  
+      free(tmp);
       return;
     }
   if ((*node)->right == NULL)
     {
+      node_t *tmp =(*node);
       *node = (*node)->left;
+      free(tmp);
       return;
     }
   else
     {
-      node_t right_node = *(*node)->right;
-      node_t *tmp = *node;
+      node_t *tmp = (*node);
+      node_t **current_right =  &(*node)->left->right;
+      while(*current_right != NULL)
+        {
+          current_right = &(*current_right)->right;
+        }
+      *current_right = (*node)->right;
       *node = (*node)->left;
       free(tmp);
+
+
+
+
+
+
+
+      
+      /*
+      node_t *tmp = *node;
+      node_t *current_right = (*node)->left->right;
+      while(current_right != NULL)
+        {
+          current_right = current_right->right;
+        }
+      current_right = (*node)->right;
+      *node = (*node)->left;
+      free(tmp);
+      */
+      /*
+      node_t *right_node = (*node)->right;
+      node_t *tmp = *node;
+      *node = (*node)->left;
       node_t *current_right = (*node)->right;
       while(current_right != NULL)
         {
           current_right = current_right->right;
         }
-      current_right = &right_node;
-    }
+      current_right = right_node;
+      free(tmp);
+      */ 
+   }
+  
 }
 
 
-bool node_remove(node_t *node, tree_key_t key , elem_t *result)
+bool node_remove(node_t **node, tree_key_t key , elem_t *result)
 {
-  if (key.i == node->key.i)
+  if (key.i == (*node)->key.i)
     {
-      node_patch(&node, result);
+      node_patch(node, result);
       return true;
     }
-  if (key.i > node->key.i)
+  if (key.i > (*node)->key.i)
     {
-      return node_remove(node->right, key, result);
+      return node_remove(&(*node)->right, key, result);
     }
-  if (key.i < node->key.i)
+  if (key.i < (*node)->key.i)
     {
-      return node_remove(node->left , key, result);
+      return node_remove(&(*node)->left , key, result);
     }
-  return false;
+  return NULL;
 }
 
 
 bool tree_remove(tree_t *tree, tree_key_t key, elem_t *result)
 {
-  return node_remove(tree->root, key, result);
+  return node_remove(&tree->root, key, result);
 }
-/*
-int main()
+
+int main1()
 
 {
   tree_t *tree  = tree_new(NULL,NULL,NULL,NULL);
@@ -476,40 +511,50 @@ int main()
   elem6.i = 5552;
   tree_insert(tree , key6 , elem6);
   
-  elem_t *result = NULL;
-  tree_remove(tree, key6, result);  
+  elem_t result;
+  tree_remove(tree, key2, &result);  
   int i = tree_depth(tree);
   int j = tree_size(tree);
   printf("depth = %d , size = %d\n" , i ,j);
-    
+  /*  
   printf("12 root = %d\n" , tree->root->key.i);
   printf("10 root->left = %d\n" , tree->root->left->key.i);
   printf("15 root->right = %d\n" , tree->root->right->key.i);
   printf("17 root->right->right = %d\n" , tree->root->right->right->key.i);
   printf("7 root->left->left = %d\n" , tree->root->left->left->key.i);
   printf("11 root->left->right = %d\n" , tree->root->left->right->key.i);
-  
+  */
 
-  printf("root = %d\n", tree->root->key.i );
-  printf("root->right = %d\n" , tree->root->right->key.i);
-  printf("root->right->right = %d\n" , tree->root->right->right->key.i);
-  printf("root->right->left = %d\n" , tree->root->right->left->key.i);
-  printf("root->right->left->right = %d\n" , tree->root->right->left->right->key.i);
+  printf("3 root = %d\n", tree->root->key.i );
+  printf("5 root->right = %d\n" , tree->root->right->key.i);
+  printf("6 root->right->right = %d\n" , tree->root->right->right->key.i);
+  printf("8 root->right->right->right = %d\n" , tree->root->right->right->right->key.i);
+  // printf("root->right->left = %d\n" , tree->root->right->left->key.i);
+  //printf("root->right->left->right = %d\n" , tree->root->right->left->right->key.i);
   
   
-  
+  return 0;  
 }
-*/
+
+
 int main()
 {
   tree_t *tree  = tree_new(NULL,NULL,NULL,NULL);
-  
   elem_t key;
   key.i = 3;
   elem_t elem;
   elem.i = 555;
   tree_insert(tree, key , elem);
-  elem_t *result = NULL;
-  tree_remove(tree, key , result);
-  printf("%p\n" , tree->root);
+
+  elem_t key1;
+  key1.i = 1;
+  elem_t elem1;
+  elem1.i = 555;
+  tree_insert(tree, key1 , elem1);
+
+  
+  elem_t result;
+  tree_remove(tree, key , &result);
+  printf("%d\n" , tree->root->key.i);
 }
+
