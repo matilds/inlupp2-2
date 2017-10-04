@@ -1,0 +1,20 @@
+#include "tree.h"
+#include <CUnit/CUnit.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+
+void test_tree_new()
+{
+  CU_ASSERT_TRUE(tree_new(NULL, NULL, NULL, NULL) == NULL);
+}
+
+int main()
+{
+  CU_initialize_registry();
+  test_tree_new();
+
+  CU_basic_run_tests();
+
+  CU_cleanup_registry();
+}
