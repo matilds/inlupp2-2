@@ -123,34 +123,35 @@ int tree_depth(tree_t *tree)
   return node_depth(tree->root);
 }
 
-node_t **place_to_insert_node(node_t *node, tree_key_t key)
+node_t **place_to_insert_node(node_t *node, tree_key_t key, element_comp_fun fun)
 {
 
-  if(key.i > node->key.i)
+  if(fun(key, node->key) > 0)  // (key.i > node->key.i)
     {
       if (node->right == NULL)
         {
           return &(node->right);
         }
-      return place_to_insert_node(node->right , key);
+      return place_to_insert_node(node->right , key, fun);
      
     }
 
-  if(key.i < node->key.i)
+  if(fun(key, node->key) < 0) //(key.i < node->key.i)
     {
       
       if(node->left == NULL)
         {
           return &(node->left);
         }
-      return place_to_insert_node(node->left , key);
+      return place_to_insert_node(node->left , key, fun);
     }
+  
   return NULL;
 }
 
 node_t **place_to_insert_tree(tree_t *tree, tree_key_t key)
 {
-  return place_to_insert_node(tree->root, key);
+  return place_to_insert_node(tree->root, key, tree->compare);
 }
 
 node_t **left_left (node_t **node)
@@ -238,7 +239,7 @@ node_t **balance_node_right(node_t **node)
 {
   if (node_depth((*node)->right->right) > node_depth((*node)->right->left))
     {
-      return right_right(node);
+      return right_right(node); 
     }
   else if (node_depth((*node)->right->left) > node_depth((*node)->right->right)
            && (*node)->left == NULL)
@@ -372,7 +373,7 @@ bool tree_get(tree_t *tree, tree_key_t key, elem_t *result)
 
 void node_patch(node_t **node , elem_t *result)
 {
-  result = &(*node)->elem;
+  result = &(*node)->elem; 
   if ((*node)->right == NULL && (*node)->left == NULL)
     {
      (*node) = NULL;
@@ -544,6 +545,7 @@ bool tree_apply(tree_t *tree, enum tree_order order, key_elem_apply_fun fun, voi
   return tree_application(tree->root, order, fun, data);
 }
 
+
 int main1()
 
 {
@@ -596,19 +598,19 @@ int main1()
   int i = tree_depth(tree);
   int j = tree_size(tree);
   printf("depth = %d , size = %d\n" , i ,j);
-  /*  
+  
   printf("12 root = %d\n" , tree->root->key.i);
   printf("10 root->left = %d\n" , tree->root->left->key.i);
   printf("15 root->right = %d\n" , tree->root->right->key.i);
   printf("17 root->right->right = %d\n" , tree->root->right->right->key.i);
   printf("7 root->left->left = %d\n" , tree->root->left->left->key.i);
   printf("11 root->left->right = %d\n" , tree->root->left->right->key.i);
-  */
+  
 
-  printf("3 root = %d\n", tree->root->key.i );
-  printf("5 root->right = %d\n" , tree->root->right->key.i);
-  printf("6 root->right->right = %d\n" , tree->root->right->right->key.i);
-  printf("8 root->right->right->right = %d\n" , tree->root->right->right->right->key.i);
+  //  printf("3 root = %d\n", tree->root->key.i );
+  // printf("5 root->right = %d\n" , tree->root->right->key.i);
+  // printf("6 root->right->right = %d\n" , tree->root->right->right->key.i);
+  // printf("8 root->right->right->right = %d\n" , tree->root->right->right->right->key.i);
   // printf("root->right->left = %d\n" , tree->root->right->left->key.i);
   //printf("root->right->left->right = %d\n" , tree->root->right->left->right->key.i);
   
@@ -616,7 +618,7 @@ int main1()
   return 0;  
 }
 
-
+/*
 int main()
 {
   tree_t *tree  = tree_new(NULL,NULL,NULL,NULL);
@@ -638,3 +640,4 @@ int main()
   printf("%d\n" , tree->root->key.i);
 }
 
+*/
