@@ -4,11 +4,6 @@
 #include "CUnit/Basic.h"
 #include <stdlib.h>
 
-
-void test_tree_new()
-{
-  CU_ASSERT_TRUE(tree_new(NULL, NULL, NULL, NULL) != NULL);
-}
 int tree_compare_fun(elem_t elem1 , elem_t elem2)
 {
 
@@ -24,6 +19,56 @@ int tree_compare_fun(elem_t elem1 , elem_t elem2)
     {
       return 0;
     }
+}
+
+
+void test_tree_new()
+{
+  CU_ASSERT_TRUE(tree_new(NULL, NULL, NULL, NULL) != NULL);
+}
+
+
+
+void test_tree_delete()
+{ /* TODO:  *//* TODO:  *//* TODO:  *//* TODO:  *//* TODO:  *//* TODO:  *//* TODO:  */tt
+   tree_t *tree  = tree_new(NULL,NULL,NULL,tree_compare_fun);
+  
+  elem_t key; key.i = 3;
+  elem_t elem; elem.i = 555;
+  tree_insert(tree, key , elem);
+  
+  elem_t key1; key1.i = 2;
+  elem_t elem1; elem1.i = 555;
+  tree_insert(tree , key1 , elem1);
+  
+  elem_t key2; key2.i = 1;
+  elem_t elem2; elem2.i = 5552;
+  tree_insert(tree , key2 , elem2);
+
+  /* TODO:  *//* TODO:  *//* TODO:  *//* TODO:  *//* TODO:  *//* TODO:  *//* TODO:  *//* TODO:  *//* TODO:  *//* TODO:  */
+}
+
+void test_tree_size()
+{
+  tree_t *tree  = tree_new(NULL,NULL,NULL,tree_compare_fun);
+
+  CU_ASSERT_TRUE(tree_size(tree) == 0);
+  
+  elem_t key; key.i = 3;
+  elem_t elem; elem.i = 555;
+  tree_insert(tree, key , elem);
+
+  CU_ASSERT_TRUE(tree_size(tree) == 1);
+    
+  elem_t key1; key1.i = 2;
+  elem_t elem1; elem1.i = 555;
+  tree_insert(tree , key1 , elem1);
+  
+  elem_t key2; key2.i = 1;
+  elem_t elem2; elem2.i = 5552;
+  tree_insert(tree , key2 , elem2);
+
+  CU_ASSERT_TRUE(tree_size(tree) == 3);
 }
 
 void test_tree_depth()
