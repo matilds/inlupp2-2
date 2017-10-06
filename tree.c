@@ -214,25 +214,25 @@ node_t **find_unbalanced_to_fix(node_t **node, node_t **unbalanced_part)
 
 node_t **balance_node_left(node_t **node)
 {
-    if (node_depth((*node)->right->right) > node_depth((*node)->right->left))
-        {
-          return right_right(node);
-        }
-      else if (node_depth((*node)->right->left) > node_depth((*node)->right->right)
-               && (*node)->left == NULL)
-        {
-          return right_left(node);
-        }
-      else if(node_depth((*node)->right->left->right) > node_depth((*node)->right->left->left))
-        {
-          left_right(&(*node)->right);
-          return right_right(node);
-        }
-      else
-        {
-          left_left(&(*node)->right);
-          return right_right(node);
-        }
+  if (node_depth((*node)->left->left) > node_depth((*node)->left->right))
+    {
+      return left_left(node);
+    }
+  else if (node_depth((*node)->left->right) > node_depth((*node)->left->left)
+           &&((*node)->right == NULL))
+    {
+      return left_right(node);
+    }
+  else if( node_depth((*node)->left->right->left) > node_depth((*node)->left->right->right))
+    {
+      right_left(&(*node)->left);
+      return left_left(node);
+    }
+  else
+    {
+      right_right(&(*node)->left);
+      return left_left(node);
+    }
 }
   
 node_t **balance_node_right(node_t **node)
