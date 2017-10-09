@@ -1,0 +1,93 @@
+#include "list.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <CUnit/Basic.h>
+#include <CUnit/CUnit.h>
+#include <CUnit/Automated.h>
+
+void test_list_new()
+{
+  CU_ASSERT_TRUE(list_new(NULL, NULL, NULL) != NULL);
+}
+
+void test_list_insert_and_length()
+{
+  list_t *list = list_new(NULL, NULL, NULL);
+  elem_t elem; elem.i = 1;
+  elem_t elem2; elem2.i = 2;
+
+  CU_ASSERT_TRUE(list_length(list) == 0);
+  
+  CU_ASSERT_TRUE(list_insert(list, 10, elem));
+  CU_ASSERT_TRUE(list_length(list) == 1);
+
+  CU_ASSERT_TRUE(list_insert(list, -1, elem2));
+  CU_ASSERT_TRUE(list_length(list) == 2);
+  
+}
+
+void test_list_append()
+{}
+
+void test_list_prepend()
+{}
+
+// Not defined in list.h
+void test_list_get_link()
+{}
+
+void test_list_remove()
+{}
+
+void test_list_get()
+{
+  list_t *list = list_new(NULL, NULL, NULL);
+  elem_t *result = 0;
+  CU_ASSERT_TRUE(list_get(list, 10, result) == false);
+  CU_ASSERT_TRUE(result == 0);
+  
+  elem_t elem; elem.i = 1;
+  list_insert(list, 0, elem);
+  //CU_ASSERT_TRUE(list_get(list, 0, result) == true);
+  list_insert(list, 1, elem);
+  CU_ASSERT_TRUE(list_get(list, 1, result) == true);
+  CU_ASSERT_TRUE(result != 0);
+}
+
+void test_list_first()
+{}
+
+void test_list_last()
+{}
+
+void test_list_delete()
+{}
+
+void test_list_apply()
+{}
+
+void test_list_contains()
+{}
+
+int main()
+{
+  // Initialise
+  CU_initialize_registry();
+
+  // Set up suites and tests
+  CU_pSuite list_new = CU_add_suite("Test new list", NULL, NULL);
+  CU_add_test(list_new, "list_new", test_list_new);
+  
+  CU_pSuite list_insert_and_length = CU_add_suite("Test list insert & length", NULL, NULL);
+  CU_add_test(list_insert_and_length, "list_insert_and_length, list_length", test_list_insert_and_length);
+
+  CU_pSuite list_get = CU_add_suite("Test list get!", NULL, NULL);
+  CU_add_test(list_get, "list_get", test_list_get);
+  
+  //Actually run tests
+  CU_basic_run_tests();
+
+  // Tear down
+  CU_cleanup_registry();
+  return 0;
+}

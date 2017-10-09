@@ -11,7 +11,6 @@ struct list{
   link_t *last;
 };
 
-
 struct link{
   elem_t  element;
   link_t *next;
@@ -25,30 +24,6 @@ list_t *list_new(element_copy_fun copy, element_free_fun free, element_comp_fun 
   new_list->compare = compare;
 
   return new_list;
-}
-
-///ITERATION & REKURSION
-
-int list_length_iteration_link(link_t *link, int count)
-{
-
-  if (link->next == NULL)
-    {
-      return count;
-    }
-  else
-    {
-      ++count;
-      list_length_iteration_link(link->next, count);
-    }
-  return count;
-  
-}
-
-int list_length_iteration(list_t *list)
-{
-  int count = 0;
-  return list_length_iteration_link(list->first, count);
 }
 
 int list_length(list_t *list)
@@ -137,10 +112,10 @@ link_t *list_get_link(list_t *list, int index)
   return link_pointer;
 }
 
-void list_insert(list_t *list, int index, elem_t elem)
+bool list_insert(list_t *list, int index, elem_t elem)
 { 
   if(!list){
-    return;
+    return false;
   }
   
   element_copy_fun copy = list->copy;
@@ -156,12 +131,12 @@ void list_insert(list_t *list, int index, elem_t elem)
 
   if (index == 0 || index < 0){
     list_prepend(list, elem);
-    return;
+    return true;
   }
   else if (index == length || index > length)
     {
     list_append(list, elem);
-    return;
+    return true;
   }
 
   link_t *link = calloc(1, sizeof(link_t));
@@ -171,7 +146,7 @@ void list_insert(list_t *list, int index, elem_t elem)
   link->next = link_pointer->next;
   link_pointer->next = link;
 
-  return;
+  return true;
 }
 
 void list_remove(list_t *list, int index, bool delete)
@@ -226,7 +201,7 @@ void list_remove(list_t *list, int index, bool delete)
   return;
 }
 
-bool list_get(list_t *list, int index, elem_t *result)
+bool list_get_orig(list_t *list, int index, elem_t *result)
 {
   if(!list)
     {
@@ -249,6 +224,45 @@ bool list_get(list_t *list, int index, elem_t *result)
   
   *result = (list_get_link(list, index))->element;
 
+  return true;
+}
+
+bool list_get_node(list_t *list, int index, elem_t *result)
+{
+  if(list == NULL)
+    {
+      return false;
+    }
+  link_t *link_pointer = list->first;
+
+  for(int i = 0; i < index; ++i)
+  //int i = 0;
+  //while (link_pointer->next != NULL || i < index)  
+    {
+      link_pointer = link_pointer->next;
+      //++i;
+    }
+  
+  *result = link_pointer->element;
+
+  return true;
+}
+
+bool list_get(list_t *list, int index, elem_t *result)
+{ 
+  int length = list_length(list);
+  if (index < 0){
+    index = length + index;   
+  }
+  
+  if(index >= list_length(list) || index < 0)
+    {
+      return false;
+    }
+  else
+    {
+      list_get_node(list, index, result);
+    }
   return true;
 }
 
