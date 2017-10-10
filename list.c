@@ -306,14 +306,13 @@ bool list_apply(list_t *list, elem_apply_fun fun, void *data)
 
     for(int index = 0; index < list_length(list); index++)
       {
-        elem_t *tmp = calloc(1, sizeof(elem_t));
+        elem_t *tmp = NULL;
         list_get(list, index, tmp);   
         bool fun_result = fun(*tmp, data);
         if (fun_result == true)
           {
             return_value = true;
           }           
-        free(tmp);
       }
     }
     
