@@ -1,49 +1,9 @@
+#include <stdbool.h>
+#include <ctype.h>
+//#include "lager.h"
+#include "utils.h"
 #include "list.h"
+#include <stdio.h>
+#include <string.h>
+#include "tree.h" 
 #include <stdlib.h>
-
-
-typedef struct link link_t;
-typedef struct list list_t;
-
-struct link
-{
-  elem_t element;
-  link_t *next;
-};
-
-struct list
-{
-  link_t *first;
-  link_t *last;
-};
-
-
-list_t *list_new(element_copy_fun copy, element_free_fun free, element_comp_fun compare)
-{
-  return calloc(1, sizeof(list_t));
-}
-
-link_t *link_new(elem_t elem)
-{
-  link_t *new = calloc(1 , sizeof(link_t));
-  new->element = elem; 
-  return new;
-                       
-}
-
-
-void list_insert(list_t *list, int index, elem_t elem)
-{
-  int i = 0;
-  link_t *current = list->first;
-
-  
-  while(i < index)
-    {
-      current = current->next;   
-   }
-  link_t *new = link_new(elem);
-  new->next = current;
-  current = new;
-}
-
