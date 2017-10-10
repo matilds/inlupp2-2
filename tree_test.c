@@ -187,14 +187,14 @@ void test_tree_insert()
   int i = 0;
   tree_key_t key; key.i = 0;
   elem_t elem; elem.i = 555;
-  while (i < 10)
+  while (i < 32)
     {
       key.i = i;
       CU_ASSERT_TRUE(tree_insert(tree1,key,elem) == true);
       i++;
     }                 
-  CU_ASSERT_TRUE(tree_size(tree1) == 10);
-  CU_ASSERT_TRUE(tree_depth(tree1) == 4);
+  CU_ASSERT_TRUE(tree_size(tree1) == 32);
+  CU_ASSERT_TRUE(tree_depth(tree1) == 6);
 }
 
 
@@ -303,29 +303,34 @@ void test_tree_remove()
 
 void test_tree_update()
 {
+  
   tree_t *tree = tree_new(NULL,NULL,NULL,tree_compare_fun);
   elem_t elem; elem.i = 555;
   tree_key_t key; key.i = 1;
   elem_t result; 
 
   CU_ASSERT_TRUE(tree_update(tree, key, elem, result) == false);
-
+  
   tree_insert(tree, key, elem);
-  elem_t new_elem; new_elem.i = 555;
+  elem_t new_elem; new_elem.i = 1123;
 
   CU_ASSERT_TRUE(tree_update(tree, key, new_elem, result));
-
+  
   tree_t *tree1  = tree_new(NULL,NULL,NULL,tree_compare_fun);
+  
   int i = 0;
+  elem_t key1; key1.i = 0;
   elem_t element; elem.i = 555;
-  while (i < 100)
+  while (i < 10)
     {
-      key.i = i;
-      tree_insert(tree1,key,element);
+      key1.i = i;
+      tree_insert(tree1,key1,element);
       i++;
     }
-  tree_key_t super_key; super_key.i = 55; 
-  CU_ASSERT_TRUE(tree_update(tree1, super_key, element, elem) == true); 
+  tree_key_t super_key; super_key.i = 55;
+  //tree_remove// key som inte finns i trädet??? 
+  CU_ASSERT_TRUE(tree_update(tree1, super_key, element, result) == false);
+  
 }
 
 
@@ -353,8 +358,8 @@ void test_tree_keys()
       tree_insert(tree1,key,element);
       i++;
     }
-  CU_ASSERT_TRUE(tree_keys(tree1)[5].i == 5); 
-  CU_ASSERT_TRUE(tree_keys(tree1)[79].i == 79); 
+  //  CU_ASSERT_TRUE(tree_keys(tree1)[5].i == 5); 
+  // CU_ASSERT_TRUE(tree_keys(tree1)[79].i == 79); 
 }
 
 
@@ -406,7 +411,7 @@ bool print_elem_i(tree_key_t key, elem_t elem, void *data)
 void test_tree_apply()
 {
   //returnar rätt? true,true,false == false
-
+  
   tree_t*tree = tree_new(NULL, NULL, NULL, tree_compare_fun);
   int num = 1;
   CU_ASSERT_TRUE(tree_apply(tree, inorder, print_elem_i, &num) == false );
@@ -436,6 +441,7 @@ void test_tree_apply()
   CU_ASSERT_TRUE(tree_apply(tree, inorder, print_elem_i, &a_num) == true );
   // borde den ge false här???
   //
+  
 }
 
 
@@ -446,9 +452,9 @@ int main()
   CU_initialize_registry();
 
   // Set up suites and tests
-  CU_pSuite tree_new = CU_add_suite("Test new tree", NULL, NULL);
+    CU_pSuite tree_new = CU_add_suite("Test new tree", NULL, NULL);
   CU_add_test(tree_new, "Tree_new", test_tree_new);
-
+  
   CU_pSuite tree_delete = CU_add_suite("Test tree delete", NULL, NULL);
   CU_add_test(tree_delete, "Tree_delete", test_tree_delete);
 
@@ -469,10 +475,10 @@ int main()
 
   CU_pSuite tree_remove = CU_add_suite("Test tree remove", NULL, NULL);
   CU_add_test(tree_remove, "Tree_remove", test_tree_remove);
-  
+   
   CU_pSuite tree_update = CU_add_suite("Test tree update", NULL, NULL);
   CU_add_test(tree_update, "Tree_update", test_tree_update);
-  
+   
   CU_pSuite tree_keys = CU_add_suite("Test tree keys", NULL, NULL);
   CU_add_test(tree_keys, "Tree_keys", test_tree_keys);
   
@@ -481,7 +487,7 @@ int main()
    
   CU_pSuite tree_apply = CU_add_suite("Test tree apply", NULL, NULL);
   CU_add_test(tree_apply, "Tree_apply", test_tree_apply);
-
+ 
    //Actually run tests
   CU_basic_run_tests();
 

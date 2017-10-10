@@ -113,6 +113,34 @@ link_t *list_get_link(list_t *list, int index)
   return link_pointer;
 }
 
+bool list_get(list_t *list, int index, elem_t *result)
+{
+  if(!list)
+    {
+      return false;
+    }
+  
+  int length = list_length(list);
+
+   if (index < 0){
+    index = length + 1 + index;
+  }
+  
+  if(index > length){
+    return false;
+  }
+  
+ 
+  if(index > length-1 || index < 0)
+    {
+      return false;
+    }
+  
+  *result = (list_get_link(list, index))->element;
+
+  return true;
+}
+
 void list_insert(list_t *list, int index, elem_t elem)
 { 
   if(!list){
@@ -202,31 +230,7 @@ void list_remove(list_t *list, int index, bool delete)
   return;
 }
 
-bool list_get(list_t *list, int index, elem_t *result)
-{
-  if(!list)
-    {
-      return false;
-    }
-  
-  int length = list_length(list);
-  if(index > length){
-    return false;
-  }
-  
-  if (index < 0){
-    index = length + 1 + index;
-  }
-  
-  if(index > length-1 || index < 0)
-    {
-      return false;
-    }
-  
-  *result = (list_get_link(list, index))->element;
 
-  return true;
-}
 
 bool list_first(list_t *list, elem_t *result)
 {

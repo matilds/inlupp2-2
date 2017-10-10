@@ -123,7 +123,10 @@ int node_depth(node_t *node)
     {
       return left_depth + 1;
     }
+  else
+    { 
   return right_depth + 1;
+    }
 }
 
 int tree_depth(tree_t *tree)
@@ -215,11 +218,15 @@ node_t **find_unbalanced_to_fix(node_t **node, node_t **unbalanced_part)
     {
       if ((*node)->right != NULL)
         {
-          find_unbalanced_to_fix(&(*node)->right, unbalanced_part);
+         return find_unbalanced_to_fix(&(*node)->right, unbalanced_part);
         }
       if ((*node)->left != NULL)
         {
-          find_unbalanced_to_fix(&(*node)->left, unbalanced_part);
+         return find_unbalanced_to_fix(&(*node)->left, unbalanced_part);
+        }
+      if( (*node)->left == NULL && (*node)->right == NULL)
+        {
+          return unbalanced_part;
         }
     }
   if(abs(depth_left - depth_right) > 1)
@@ -229,14 +236,14 @@ node_t **find_unbalanced_to_fix(node_t **node, node_t **unbalanced_part)
       
       if(depth_left > depth_right)
         {
-          find_unbalanced_to_fix(&(*node)->left, unbalanced_part);
+         return find_unbalanced_to_fix(&(*node)->left, unbalanced_part);
         }
       else
         {
-          find_unbalanced_to_fix(&(*node)->right, unbalanced_part);
+         return find_unbalanced_to_fix(&(*node)->right, unbalanced_part);
         }
     }
-  
+  assert(false);
   return unbalanced_part;
 }
 
@@ -450,6 +457,10 @@ void node_patch(node_t **node , elem_t *result)
 
 bool node_remove(node_t **node, tree_key_t key , elem_t *result, element_comp_fun fun)
 {
+  if(*node == NULL)
+    {
+      return false;
+    }
   if (fun(key, (*node)->key) == 0)  //(key.i == (*node)->key.i)
     {
       node_patch(node, result);
@@ -700,32 +711,35 @@ int tree_compare_fun1(elem_t elem1 , elem_t elem2)
       return 0;
     }
 }
-int main221()
+int main11111123()
 {
+
   tree_t *tree  = tree_new(NULL,NULL,NULL,tree_compare_fun1);
-  
   elem_t key; key.i = 3;
   elem_t elem; elem.i = 555;
-  if(tree_remove(tree, key, &elem) == true) puts("yes");
   tree_insert(tree, key , elem);
-  
+
   elem_t key1; key1.i = 2;
   elem_t elem1; elem1.i = 555;
   tree_insert(tree , key1 , elem1);
   
-  elem_t key2; key2.i = 1;
-  elem_t elem2; elem2.i = 5552;
+  elem_t key2; key2.i = 4;
+  elem_t elem2; elem2.i = 555;
   tree_insert(tree , key2 , elem2);
-  printf("tree_depth == %d\n" , tree_depth(tree));
+  
+  elem_t key3; key3.i = 1;
+  elem_t elem3; elem3.i = 555;
+  tree_insert(tree , key3 , elem3);
+  
+  elem_t key4; key4.i = 5;
+  elem_t elem4; elem4.i = 555;
+  tree_insert(tree , key4 , elem4);
 
-  tree_t *tree1  = tree_new(NULL,NULL,NULL,tree_compare_fun1);
-  int i = 0;
-  while (i < 100)
-    {
-      key.i = i;
-      tree_insert(tree1,key,elem);
-      i++;
-    }
-  printf("tree_depth == %d\n" , tree_depth(tree1));  
+  elem_t key5; key5.i = 6;
+  elem_t elem5; elem5.i = 555;
+  tree_insert(tree , key5 , elem5);
+
+  printf("%d\n" , tree->root->right->left->key.i);
+
   return 0;
 }
