@@ -236,11 +236,8 @@ bool list_get_node(list_t *list, int index, elem_t *result)
   link_t *link_pointer = list->first;
 
   for(int i = 0; i < index; ++i)
-  //int i = 0;
-  //while (link_pointer->next != NULL || i < index)  
     {
       link_pointer = link_pointer->next;
-      //++i;
     }
   
   *result = link_pointer->element;
@@ -321,18 +318,21 @@ bool list_apply(list_t *list, elem_apply_fun fun, void *data)
 
 int list_contains(list_t *list, elem_t elem)
 {
-  int result = 0;
+  int result = -1;
   element_comp_fun compare = list->compare;
+  
   for(int index = 0; index < list_length(list); index++)
     {
       elem_t *tmp = calloc(1, sizeof(elem_t));
-        list_get(list, index, tmp);   
-        result = compare(*tmp, elem);
-        if (result != 0)
-          {
-            return result;
-          }
-        free(tmp);
+      
+      list_get(list, index, tmp);   
+      result = compare(*tmp, elem);
+      if (result != 0)
+        {
+          return result;
+        }
+      
+      free(tmp);
     }
   return result;
 }

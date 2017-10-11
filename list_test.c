@@ -34,10 +34,12 @@ void test_list_append()
   elem_t result;
   
   list_append(list, elem);
+  
   CU_ASSERT_TRUE(list_get(list, 0, &result) == true);
   CU_ASSERT_TRUE(list_get(list, -1, &result) == true);
 
   list_append(list, elem2);
+  
   CU_ASSERT_TRUE(list_get(list, 1, &result) == true);
   CU_ASSERT_TRUE(result.i == elem2.i);
   CU_ASSERT_TRUE(list_get(list, 5, &result) == false);
@@ -52,10 +54,12 @@ void test_list_prepend()
   elem_t result;
 
   list_prepend(list, elem);
+  
   CU_ASSERT_TRUE(list_get(list, 0, &result) == true);
   CU_ASSERT_TRUE(list_get(list, -1, &result) == true);
 
   list_prepend(list, elem2);
+  
   CU_ASSERT_TRUE(list_get(list, 1, &result) == true);
   CU_ASSERT_TRUE(list_get(list, 5, &result) == false);
 }
@@ -75,12 +79,16 @@ void test_list_get()
 {
   list_t *list = list_new(NULL, NULL, NULL);
   elem_t result;
+  
   CU_ASSERT_TRUE(list_get(list, 10, &result) == false);
   
   elem_t elem; elem.i = 1;
   list_insert(list, 0, elem);
+  
   CU_ASSERT_TRUE(list_get(list, 0, &result) == true);
+  
   list_insert(list, 1, elem);
+  
   CU_ASSERT_TRUE(list_get(list, 1, &result) == true);
   CU_ASSERT_FALSE(result.i == 0);
 }
@@ -138,7 +146,26 @@ void test_list_apply()
 {}
 
 void test_list_contains()
-{}
+{
+  list_t *list = list_new(NULL, NULL, NULL);
+
+  elem_t elem; elem.i = 1;
+  elem_t elem2; elem2.i = 2;
+  elem_t elem3; elem3.i = 3;
+  
+  CU_ASSERT_TRUE(list_contains(list, elem) == -1); // -1 if list does not contain
+  
+  list_insert(list, 0, elem);
+  /* TODO:  */ //NEED COMPARE FUN
+  /*
+  CU_ASSERT_TRUE(list_contains(list, elem) != -1);
+  
+  list_insert(list, 1, elem2);
+  list_insert(list, 2, elem3);
+
+  CU_ASSERT_TRUE(list_contains(list, elem3) == 2);
+  */
+}
 
 int main()
 {
@@ -163,6 +190,9 @@ int main()
   
   CU_pSuite list_last = CU_add_suite("Test list last", NULL, NULL);
   CU_add_test(list_last, "list_last", test_list_last);
+
+  CU_pSuite list_contains = CU_add_suite("Test list contains", NULL, NULL);
+  CU_add_test(list_contains, "list_contains", test_list_contains);
   
   //Actually run tests
   CU_basic_run_tests();
