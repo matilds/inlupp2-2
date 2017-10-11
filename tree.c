@@ -81,31 +81,38 @@ void tree_delete(tree_t *tree, bool delete_keys, bool delete_elements)
   tree->root = NULL;
 }
 
-int node_size(node_t *node){
-  if (node == NULL){
-    return 0;
-  }
+int node_size(node_t *node)
+{
+  if (node == NULL)
+    {
+      return 0;
+    }
   int size = 0;
-  if(node->left == NULL && node->right == NULL){
-    return size;
-  }
-  if(node->left != NULL){
-    size += node_size(node->left) + 1;
-  }
-  if (node->right != NULL){
-    size += node_size(node->right) + 1;
-  }
+  if(node->left == NULL && node->right == NULL)
+    {
+      return size;
+    }
+  if(node->left != NULL)
+    {
+      size += node_size(node->left) + 1;
+    }
+  if (node->right != NULL)
+    {
+      size += node_size(node->right) + 1;
+    }
   return size;
 }
 
 int tree_size(tree_t *tree)
 {
-  if(!tree){
-    return 0;
-  }
-  if(tree->root ==  NULL){
-    return 0;
-  }
+  if(!tree)
+    {
+      return 0;
+    }
+  if(tree->root ==  NULL)
+    {
+      return 0;
+    }
   return 1 + node_size(tree->root);
 }
 
@@ -534,9 +541,8 @@ tree_key_t *tree_keys(tree_t *tree){
   return all_node_keys(tree, tree->root, keys, size, &i);
 }
 
-bool tree_application(node_t *node, enum tree_order order, key_elem_apply_fun fun, void *data)
+bool tree_application(node_t *node, enum tree_order order, key_elem_apply_fun fun, void *data, bool *return_value)
 {
-  bool return_value = false;
   
   // inorder
   if (order == 0){
@@ -545,14 +551,14 @@ bool tree_application(node_t *node, enum tree_order order, key_elem_apply_fun fu
     }
     
     if (node->left != NULL){
-      tree_application(node->left, order, fun, data);
+      tree_application(node->left, order, fun, data, return_value);
     }
     if (fun(node->key, node->elem, data) == true)
     {
-      return_value = true;
+      *return_value = true;
     }
     if (node->right != NULL){
-      tree_application(node->right, order, fun, data);
+      tree_application(node->right, order, fun, data, return_value);
     }
   }
   
@@ -569,13 +575,13 @@ bool tree_application(node_t *node, enum tree_order order, key_elem_apply_fun fu
     
     if (fun(node->key, node->elem, data) == true)
     {
-      return_value = true;
+      *return_value = true;
     } 
     if (node->left != NULL){
-      tree_application(node->left, order, fun, data);
+      tree_application(node->left, order, fun, data, return_value);
       }
     if (node->right != NULL){
-      tree_application(node->right, order, fun, data);
+      tree_application(node->right, order, fun, data, return_value);
     }
   }
   
@@ -586,18 +592,18 @@ bool tree_application(node_t *node, enum tree_order order, key_elem_apply_fun fu
     }
 
     if (node->left != NULL){
-      tree_application(node->left, order, fun, data);
+      tree_application(node->left, order, fun, data, return_value);
       }
     if (node->right != NULL){
-      tree_application(node->right, order, fun, data);
+      tree_application(node->right, order, fun, data, return_value);
     }
     if (fun(node->key, node->elem, data) == true)
     {
-      return_value = true;
+      *return_value = true;
     }
   }
   
-  return return_value;
+  return *return_value;
 }
 
 bool tree_apply(tree_t *tree, enum tree_order order, key_elem_apply_fun fun, void *data){
@@ -607,8 +613,9 @@ bool tree_apply(tree_t *tree, enum tree_order order, key_elem_apply_fun fun, voi
   if (tree->root == NULL){
     return false;    
   }
-  
-  return tree_application(tree->root, order, fun, data);
+
+  bool result = false;
+  return tree_application(tree->root, order, fun, data, &result);
 }
 
 
