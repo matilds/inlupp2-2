@@ -39,13 +39,40 @@ shelf_t *shelf_new(){
   return new_shelf;
 }
 
+item_t *item_new(){
+  item_t *new_item = calloc(1, sizeof(item_t));
+  return new_item;
+}
+
 //////////////////////ADD ITEM//////////////////////
+
+
+
+int tree_compare_fun_p(elem_t elem1 , elem_t elem2)
+{
+  char *str1 = elem1.p;
+  char *str2 = elem2.p;
+
+  if(strcmp(str1, str2) > 0)
+    {
+      return 1;
+    }
+  if (strcmp(str1, str2) < 0)
+    {
+      return -1;
+    }
+  else
+    {
+      return 0;
+    }
+}
+
 
 bool storage_has_shelf(elem_t shelf, void *data){
   char *shelf_name = ((shelf_t *)shelf.p)->shelf_name;
   if(strcmp(shelf_name, (char *)data) == 0)
     {
-      printf("Det ligger redan en annan vara på hyllan.\n");
+      printf("Det ligger redan en annan vara på hyllan. \n");
       
       return true;
     }
@@ -57,13 +84,10 @@ bool tree_item_has_shelf(key_t name, elem_t item, void *data)
 {
   return list_apply(((item_t *)item.p)->storage, storage_has_shelf, data);
 }
-/* TODO:  */
-bool tree_has_shelf(tree_t *tree, char *shelf_name){
-  tree_apply(tree, inorder, tree_item_has_shelf, shelf_name);
-  if(strcmp(shelf_name, "change made") == 0){
-    return true;
-  }
-  return false;
+
+bool tree_has_shelf(tree_t *tree, char *shelf_name)
+{
+  return tree_apply(tree, inorder, tree_item_has_shelf, shelf_name);
 }
 
 bool edit_item_shelf(elem_t shelf, void *data)
@@ -134,41 +158,83 @@ void print_item(item_t *item)
   list_apply(item->storage, print_storage, NULL);
 }
 
+item_t *create_item(tree_t *tree)
+{
+  item_t *item = item_new();
+  list_t *storage = list_new(NULL, NULL, NULL); /* TODO:  */
+
+  elem_t elem_shelf;
+  shelf_t *new_shelf = shelf_new();
+  elem_shelf.p = new_shelf;
+  
+  item->desc = ask_question_string("Beskrivning: ");
+  item->price = ask_question_int("Pris: ");
+  do
+    {
+      new_shelf->shelf_name = ask_question_shelf("Lagerhylla: ");
+    }
+  while (tree_has_shelf(tree, new_shelf->shelf_name));
+
+  new_shelf->amount = ask_question_int("Antal: ");
+  
+  list_append(storage, elem_shelf);
+  item->storage = storage;
+
+  return item;
+}
+
 void add_item_to_db(tree_t *tree)
 {
   key_t name;
   name.p =  ask_question_string("Namn på varan: ");
   
-  if(tree_has_key(tree, name)){
-    printf("Varan finns redan, använder samma pris och beskrivning.\n");
+  if(tree_has_key(tree, name))
+    {
+      printf("Varan finns redan, använder samma pris och beskrivning. \n");
 
-    elem_t *elem;
-    tree_get(tree, name, elem);
+      elem_t elem; //ändring
+      tree_get(tree, name, &elem);
     
-    item_t *item = elem->p;
-    edit_shelf(tree, item);
-    print_item(item);
-    return;
-  }
+      item_t *item = (&elem)->p;
+      edit_shelf(tree, item);
+      print_item(item);
+    
+      return;
+    }
   /* TODO:  *//* TODO:  *//* TODO:  */
-  item_t *new_item = input_item(tree);
-  new_item->name = name;
-  print_item(new_item);
-  char answer;
-  while(true){
-    answer = ask_question_want_to_add_item();
-    if(answer == 'J'){
-      tree_insert(tree, name, new_item);
-      return;
+  else
+    {
+      item_t *new_item = create_item(tree);
+      char answer;
+      
+      new_item->name = name.p;
+      print_item(new_item);
+      
+      while(true)
+        {
+          answer = ask_question_want_to_add_item();
+          
+          if(answer == 'J')
+            {
+              elem_t elem_new_item;
+              elem_new_item.p = new_item;
+              tree_insert(tree, name, elem_new_item);
+              
+              return;
+            }
+          if(answer == 'N')
+            {
+              return;
+            }
+          
+          if(answer == 'R')
+            {
+              add_item_to_db(tree); /* TODO:  */ // anropa edit_item... istället
+              
+              return;
+            }
+        }
     }
-    if(answer == 'N'){
-      return;
-    }
-    if(answer == 'R'){
-      add_item_to_db(tree);
-      return;
-    }
-  }
 }
 
 void event_loop(tree_t *tree)
@@ -184,7 +250,7 @@ void event_loop(tree_t *tree)
           run_loop = false;
           break;
         case 'L':
-
+          add_item_to_db(tree);
           break;
         case 'T':
          
@@ -209,7 +275,7 @@ void event_loop(tree_t *tree)
 
 int main()
 {
-  tree_t *tree = tree_new(NULL, NULL, NULL, NULL); /* TODO:  */
+  tree_t *tree = tree_new(NULL, NULL, NULL, tree_compare_fun_p); /* TODO:  */
   event_loop(tree);
   
   return 0;

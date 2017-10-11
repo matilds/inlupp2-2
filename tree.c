@@ -364,23 +364,23 @@ bool tree_insert(tree_t *tree, tree_key_t key, elem_t elem)
 
 bool tree_has_key(tree_t *tree, tree_key_t key)
 {
+  if (tree->root == NULL)
+    {
+      return false;
+    }
   if (tree->root != NULL)
     {
       if(tree->compare(key, tree->root->key) == 0)
         {
           return true;
-        }
+        } 
     }
   if (place_to_insert_tree(tree, key) == NULL)
     {
-      return false;
+      return true;
     }
   
-  
-  else
-    {
-      return true;
-    }   
+  return false;   
 }
 
 node_t *node_get(node_t * node, tree_key_t key, element_comp_fun fun)
@@ -534,7 +534,10 @@ tree_key_t *tree_keys(tree_t *tree){
   return all_node_keys(tree, tree->root, keys, size, &i);
 }
 
-bool tree_application(node_t *node, enum tree_order order, key_elem_apply_fun fun, void *data){
+bool tree_application(node_t *node, enum tree_order order, key_elem_apply_fun fun, void *data)
+{
+  bool return_value = false;
+  
   // inorder
   if (order == 0){
     if (node == NULL){
@@ -544,7 +547,10 @@ bool tree_application(node_t *node, enum tree_order order, key_elem_apply_fun fu
     if (node->left != NULL){
       tree_application(node->left, order, fun, data);
     }
-    fun(node->key, node->elem, data);
+    if (fun(node->key, node->elem, data) == true)
+    {
+      return_value = true;
+    }
     if (node->right != NULL){
       tree_application(node->right, order, fun, data);
     }
@@ -553,7 +559,7 @@ bool tree_application(node_t *node, enum tree_order order, key_elem_apply_fun fu
   // preorder
   if (order == -1){
     if (node == NULL){
-      return true;
+      return false;
     }
     
     if (node->left == NULL && node->right == NULL){
@@ -561,7 +567,10 @@ bool tree_application(node_t *node, enum tree_order order, key_elem_apply_fun fu
       return true;
     }
     
-   fun(node->key, node->elem, data); 
+    if (fun(node->key, node->elem, data) == true)
+    {
+      return_value = true;
+    } 
     if (node->left != NULL){
       tree_application(node->left, order, fun, data);
       }
@@ -573,7 +582,7 @@ bool tree_application(node_t *node, enum tree_order order, key_elem_apply_fun fu
   // postorder
   if (order == 1){
     if (node == NULL){
-      return true;
+      return false;
     }
 
     if (node->left != NULL){
@@ -582,10 +591,13 @@ bool tree_application(node_t *node, enum tree_order order, key_elem_apply_fun fu
     if (node->right != NULL){
       tree_application(node->right, order, fun, data);
     }
-    fun(node->key, node->elem, data);
+    if (fun(node->key, node->elem, data) == true)
+    {
+      return_value = true;
+    }
   }
   
-  return true;
+  return return_value;
 }
 
 bool tree_apply(tree_t *tree, enum tree_order order, key_elem_apply_fun fun, void *data){
