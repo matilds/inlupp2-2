@@ -13,9 +13,9 @@ typedef union element elem_t;
 union element
 {
   int           i; 
-  unsigned int  u;
+  unsigned int  u; 
   void         *p; 
-  float         f;
+  float         f; 
 };
 
 /// Functions for handling genericity
