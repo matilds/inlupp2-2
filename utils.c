@@ -41,20 +41,30 @@ bool is_number(char *str){
   return true;
 }
 
-
-bool is_shelf(char *shelf){
-  if(isalpha(shelf[0])){
-    for(int i = 1; i < strlen(shelf); i++){
-
-      if(!(isdigit(shelf[i]))){
-	return false;
-      }
+bool is_shelf(char *str)
+{
+  if (strlen (str) < 2)
+    {
+      return false;
     }
-  }
-  else{
-    return false;
-  }
-  return true;
+  if (isalpha(*str))
+    {
+      ++str;
+      
+      while (*str) 
+        {
+          if (is_number(str))
+            {
+              ++str;
+            }
+          else
+            {
+              return false;
+            }
+        }
+      return true;
+    }
+  return false;
 }
 
 
