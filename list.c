@@ -161,14 +161,18 @@ void list_remove(list_t *list, int index, bool delete)
   }
   
   element_free_fun free_fun = list->free;
+  
   if (index == 0 || index < 0)
     {
     link_t *tmp = list->first;
     list->first = list->first->next;
     if (delete == true)
       {
-        free_fun(tmp->element);
-        free(tmp);
+        if (free_fun != NULL)
+          {
+            free_fun(tmp->element);
+            free(tmp);
+          }
         return;
       }
     }
@@ -181,8 +185,11 @@ void list_remove(list_t *list, int index, bool delete)
     list->last->next = NULL;
     if (delete == true)
       {
-        free_fun(tmp->element);
-        free(tmp);
+        if (free_fun != NULL)
+          {
+            free_fun(tmp->element);
+            free(tmp);
+          }
         return;
       }
   }
@@ -193,8 +200,11 @@ void list_remove(list_t *list, int index, bool delete)
   link_pointer->next = index_pointer->next;
   if (delete == true)
     {
-      free_fun(tmp->element);
-      free(tmp);
+      if (free_fun != NULL)
+        {
+          free_fun(tmp->element);
+          free(tmp);
+        }
       return;
     }
   

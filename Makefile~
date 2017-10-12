@@ -1,0 +1,24 @@
+#  compiles lager.c
+FLAGS = -Wall -g
+
+lager: tree.o list.o lager.c utils.o
+	gcc $(FLAGS) lager.c tree.o list.o utils.o -o lager
+
+run:    lager
+	./lager
+
+utils.o: utils.c utils.h
+	gcc $(FLAGS) -c utils.c -o utils.o
+
+tree.o: tree.c tree.h
+	gcc $(FLAGS) -c tree.c -o tree.o
+
+list.o: list.c list.h
+	gcc $(FLAGS) -c list.c -o list.o
+
+
+.PHONY: clean
+clean:
+	rm -f *.o
+	rm -f lager
+	rm -f- r *-DSYM

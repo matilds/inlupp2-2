@@ -494,18 +494,6 @@ bool tree_remove(tree_t *tree, tree_key_t key, elem_t *result)
   return node_remove(&tree->root, key, result, tree->compare);
 }
 
-// inorder
-tree_key_t *all_node_keys(tree_t *tree, node_t *node, tree_key_t *keys, int size, int *i){
-  if(node->left != NULL){
-    all_node_keys(tree, node->left, keys, size, i);
-  }
-  keys[*i] = (node->key);
-  (*i)++;
-  if(node->right != NULL){
-    all_node_keys(tree, node->right, keys, size, i);
-  }
-  return keys;
-}
 
 // inorder
 elem_t *all_node_elems(node_t *node, elem_t *elems, int size, int *i){
@@ -530,6 +518,20 @@ elem_t *tree_elements(tree_t *tree){
   int i = 0;
   return all_node_elems(tree->root, elems, size, &i);
 }
+
+// inorder
+tree_key_t *all_node_keys(tree_t *tree, node_t *node, tree_key_t *keys, int size, int *i){
+  if(node->left != NULL){
+    all_node_keys(tree, node->left, keys, size, i);
+  }
+  keys[*i] = (node->key);
+  (*i)++;
+  if(node->right != NULL){
+    all_node_keys(tree, node->right, keys, size, i);
+  }
+  return keys;
+}
+
 
 tree_key_t *tree_keys(tree_t *tree){
   if(!tree || tree->root == NULL){
@@ -692,7 +694,7 @@ int main1()
 }
 
 /*
-int main()
+int main11231231231241234()
 {
   tree_t *tree  = tree_new(NULL,NULL,NULL,NULL);
   elem_t key;

@@ -30,7 +30,7 @@ char ask_question_edit_item(void);
 char ask_question_view_item(void);
 char ask_question_list_items_to_edit(void);
 char ask_question_want_to_add_item(void);
-
+char ask_question_remove_item(void);
 
 
 #endif

@@ -194,6 +194,13 @@ char ask_question_want_to_add_item(void){
   return toupper (answer.c);
 }
 
+char ask_question_remove_item(void)
+{
+  char *menu = "\n[N]ästa sida med varor\n[T]idigare sida med varor\n[V]älj vara att ta bort en hylla ifrån\n[A]vbryt\n";
+  answer_t answer = ask_question(menu, is_view_item_option, (convert_func) str_to_char);
+  return toupper (answer.c);
+
+}
 
 void print(char *str){  
   for(int n = 0; str[n] != '\0'; n++){
